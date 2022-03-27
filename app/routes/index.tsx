@@ -1,6 +1,6 @@
-import { Group, Text, useMantineTheme, MantineTheme } from '@mantine/core';
-import { Upload, Photo, X, Icon as TablerIcon } from 'tabler-icons-react';
-import { Dropzone, DropzoneStatus, IMAGE_MIME_TYPE } from '@mantine/dropzone';
+import { Group, MantineTheme, Text, useMantineTheme } from '@mantine/core';
+import { Dropzone, DropzoneStatus } from '@mantine/dropzone';
+import { Icon as TablerIcon, Photo, Upload, X } from 'tabler-icons-react';
 
 function getIconColor(status: DropzoneStatus, theme: MantineTheme) {
   return status.accepted
@@ -12,10 +12,7 @@ function getIconColor(status: DropzoneStatus, theme: MantineTheme) {
     : theme.colors.gray[7];
 }
 
-function ImageUploadIcon({
-  status,
-  ...props
-}: React.ComponentProps<TablerIcon> & { status: DropzoneStatus }) {
+function ImageUploadIcon({ status, ...props }: React.ComponentProps<TablerIcon> & { status: DropzoneStatus }) {
   if (status.accepted) {
     return <Upload {...props} />;
   }
@@ -42,14 +39,43 @@ export const dropzoneChildren = (status: DropzoneStatus, theme: MantineTheme) =>
   </Group>
 );
 
+/**
+ *
+ * @see https://stackoverflow.com/questions/19280901/javascript-upload-and-parse-file-on-fly
+ */
+
+const parser = (data) => {
+  let parsedata = [];
+
+  let newLinebrk = data.split('\n');
+  for (let i = 0; i < newLinebrk.length; i++) {
+    parsedata.push(newLinebrk[i].split(','));
+  }
+
+  console.table(parsedata);
+};
+
+const parseFiles = (files) => {
+  var myFile = files[0];
+  var reader = new FileReader();
+
+  reader.addEventListener('load', function (e) {
+    let csvdata = e.target?.result;
+    parser(csvdata);
+    //parseCsv.getParsecsvdata(csvdata); // calling function for parse csv data
+  });
+
+  reader.readAsBinaryString(myFile);
+};
+
 export default function Demo() {
   const theme = useMantineTheme();
   return (
     <Dropzone
-      onDrop={(files) => console.log('accepted files', files)}
+      onDrop={parseFiles} //(files) => console.log('accepted files', files)}
       onReject={(files) => console.log('rejected files', files)}
       maxSize={3 * 1024 ** 2}
-      accept={IMAGE_MIME_TYPE}
+      accept={['text/csv']}
     >
       {(status) => dropzoneChildren(status, theme)}
     </Dropzone>
