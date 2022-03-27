@@ -1,6 +1,8 @@
 import { Group, MantineTheme, Text, useMantineTheme } from '@mantine/core';
 import { Dropzone, DropzoneStatus } from '@mantine/dropzone';
 import { Icon as TablerIcon, Photo, Upload, X } from 'tabler-icons-react';
+// import { parseCsv } from '~/utils/parsers/csv';
+import { parseBibTex } from '../utils/parsers/bibtex';
 
 function getIconColor(status: DropzoneStatus, theme: MantineTheme) {
   return status.accepted
@@ -40,29 +42,17 @@ export const dropzoneChildren = (status: DropzoneStatus, theme: MantineTheme) =>
 );
 
 /**
- *
  * @see https://stackoverflow.com/questions/19280901/javascript-upload-and-parse-file-on-fly
  */
-
-const parser = (data) => {
-  let parsedata = [];
-
-  let newLinebrk = data.split('\n');
-  for (let i = 0; i < newLinebrk.length; i++) {
-    parsedata.push(newLinebrk[i].split(','));
-  }
-
-  console.table(parsedata);
-};
 
 const parseFiles = (files) => {
   var myFile = files[0];
   var reader = new FileReader();
 
   reader.addEventListener('load', function (e) {
-    let csvdata = e.target?.result;
-    parser(csvdata);
-    //parseCsv.getParsecsvdata(csvdata); // calling function for parse csv data
+    let plainTextContent = e.target?.result;
+    parseBibTex(plainTextContent);
+    // parseCsv(plainTextContent);
   });
 
   reader.readAsBinaryString(myFile);
@@ -75,7 +65,7 @@ export default function Demo() {
       onDrop={parseFiles} //(files) => console.log('accepted files', files)}
       onReject={(files) => console.log('rejected files', files)}
       maxSize={3 * 1024 ** 2}
-      accept={['text/csv']}
+      accept={['text/csv', 'text/plain', 'text/x-bibtex']}
     >
       {(status) => dropzoneChildren(status, theme)}
     </Dropzone>
