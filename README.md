@@ -1,4 +1,6 @@
 - [x] Use Remix
 - [x] Use Mantine
 - [x] Upload and parse csv
+- [x] Export references from scopus in bibtex file format (.bib)
 - [x] Upload and parse bibtex
+- [ ] Get DOIs for each reference of an entry

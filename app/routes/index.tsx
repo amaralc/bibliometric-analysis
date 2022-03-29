@@ -1,6 +1,8 @@
 import { Group, MantineTheme, Text, useMantineTheme } from '@mantine/core';
 import { Dropzone, DropzoneStatus } from '@mantine/dropzone';
+import { useEffect, useState } from 'react';
 import { Icon as TablerIcon, Photo, Upload, X } from 'tabler-icons-react';
+import { getDOIByQuery } from '~/requests/getDOIByTitleAndYearRequest';
 // import { parseCsv } from '~/utils/parsers/csv';
 import { parseBibTex } from '../utils/parsers/bibtex';
 
@@ -60,6 +62,16 @@ const parseFiles = (files) => {
 
 export default function Demo() {
   const theme = useMantineTheme();
+  const [references, setReferences] = useState([]);
+
+  useEffect(() => {
+    const query = `Additive%20manufacturing:%20scientific%20and%20technological%20challenges,%20market%20uptake%20and%20opportunities`;
+    const email = `unpaywall_01@example.com`;
+    getDOIByQuery(query, email, setReferences, references);
+  }, []);
+
+  console.log(references);
+
   return (
     <Dropzone
       onDrop={parseFiles} //(files) => console.log('accepted files', files)}
