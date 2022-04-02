@@ -355,7 +355,7 @@ export function BibtexParser(arg0) {
             this.STATE_ = this.STATES_.ENTRY_OR_JUNK;
             break;
           }
-          if (/[\-A-Za-z:]/.test(c)) {
+          if (/[\-A-Za-z:_]/.test(c)) {
             // Add to key
             this.PARSETMP_.Key += c;
             this.SKIPWS_ = false;
