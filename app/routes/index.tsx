@@ -1,10 +1,8 @@
 import { Group, MantineTheme, Text, useMantineTheme } from '@mantine/core';
 import { Dropzone, DropzoneStatus } from '@mantine/dropzone';
-import { useEffect, useState } from 'react';
 import { Icon as TablerIcon, Photo, Upload, X } from 'tabler-icons-react';
-import { getDOIByQuery } from '~/requests/getDOIByTitleAndYearRequest';
-// import { parseCsv } from '~/utils/parsers/csv';
-import { parseBibTex } from '../utils/parsers/bibtex';
+import { parseBibTex } from '~/utils/parsers/bibtex';
+import { parseCsv } from '~/utils/parsers/csv';
 
 function getIconColor(status: DropzoneStatus, theme: MantineTheme) {
   return status.accepted
@@ -49,12 +47,21 @@ export const dropzoneChildren = (status: DropzoneStatus, theme: MantineTheme) =>
 
 const parseFiles = (files) => {
   var myFile = files[0];
+
+  console.log(myFile.type);
   var reader = new FileReader();
 
   reader.addEventListener('load', function (e) {
     let plainTextContent = e.target?.result;
-    parseBibTex(plainTextContent);
-    // parseCsv(plainTextContent);
+    // parseBibTex(plainTextContent);
+
+    if (myFile.type === 'text/csv') {
+      return parseCsv(plainTextContent);
+    }
+
+    if (myFile.type === 'text/x-bibtex') {
+      return parseBibTex(plainTextContent);
+    }
   });
 
   reader.readAsBinaryString(myFile);
@@ -62,15 +69,30 @@ const parseFiles = (files) => {
 
 export default function Demo() {
   const theme = useMantineTheme();
-  const [references, setReferences] = useState([]);
+  // const [references, setReferences] = useState([]);
 
-  useEffect(() => {
-    const query = `Additive%20manufacturing:%20scientific%20and%20technological%20challenges,%20market%20uptake%20and%20opportunities`;
-    const email = `unpaywall_01@example.com`;
-    getDOIByQuery(query, email, setReferences, references);
-  }, []);
+  // useEffect(() => {
+  //   // const query = `Additive%20manufacturing:%20scientific%20and%20technological%20challenges,%20market%20uptake%20and%20opportunities`;
+  //   // const email = `unpaywall_01@example.com`;
+  //   // getDOIByQueryAndCallCallbackRequest(query, email, setReferences, references);
 
-  console.log(references);
+  //   const referencesDOIs = [
+  //     { title: 'Additive manufacturing: scientific and technological challenges, market uptake and opportunities' },
+  //     { title: 'Additive manufacturing: scientific and technological challenges, market uptake and opportunities' },
+  //   ].map((reference) => getDOIByTitleRequest(reference.title, 'unpaywall_01@example.com'));
+
+  //   const referencesDOIx = Promise.all(
+  //     [
+  //       { title: 'Additive manufacturing: scientific and technological challenges, market uptake and opportunities' },
+  //       { title: 'Additive manufacturing: scientific and technological challenges, market uptake and opportunities' },
+  //     ].map((reference) => getDOIByTitleRequest(reference.title, 'unpaywall_01@example.com')),
+  //   );
+
+  //   console.log(referencesDOIs);
+  //   console.log(referencesDOIx);
+  // }, []);
+
+  // console.log(references);
 
   return (
     <Dropzone

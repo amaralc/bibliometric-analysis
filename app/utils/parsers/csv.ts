@@ -28,7 +28,6 @@ export function parseCsvString(text) {
 }
 
 export const parseCsv = (data) => {
-  console.log(`csv`, data);
   let parsedata = [];
 
   let newLinebrk = data.split('\n');
@@ -38,4 +37,70 @@ export const parseCsv = (data) => {
   }
 
   console.table(parsedata);
+
+  // const words = [
+  //   ...new Set(
+  //     parsedata
+  //       .slice(1)
+  //       .flatMap((i) => i)
+  //       .filter((i) => i !== '')
+  //       .map((i) => i?.toLowerCase())
+  //       .sort(),
+  //   ),
+  // ];
+
+  // let orQuery = `"${words[0]}"`;
+  // words.forEach((w, i) => {
+  //   if (i < 1) return;
+
+  //   orQuery += ` OR "${words[i]}"`;
+  // });
+
+  // const words = [
+  //   ...new Set(
+  //     parsedata
+  //       .slice(1)
+  //       .flatMap((i) => i)
+  //       .filter((i) => i !== '')
+  //       .map((i) => i?.toLowerCase())
+  //       .sort(),
+  //   ),
+  // ];
+
+  let orQuery = ``;
+  let nouns = [];
+  let adjectives = [];
+
+  parsedata.slice(1).forEach((list, i) => {
+    if (list[0] !== '') nouns.push(list[0]);
+    if (list[1] !== '') adjectives.push(list[1]);
+  });
+
+  nouns.forEach((noun, i) => {
+    if (i === 0) {
+      orQuery += `("${noun}" OR `;
+      return;
+    }
+    if (i === nouns.length - 1) {
+      orQuery += `"${noun}")`;
+      return;
+    }
+    orQuery += `"${noun}" OR `;
+  });
+
+  orQuery += ' AND ';
+
+  adjectives.forEach((adjective, j) => {
+    if (j === 0) {
+      orQuery += `("${adjective}" OR `;
+      return;
+    }
+    if (j === adjectives.length - 1) {
+      orQuery += `"${adjective}")`;
+      return;
+    }
+    orQuery += `"${adjective}" OR `;
+  });
+
+  console.log(orQuery);
 };
